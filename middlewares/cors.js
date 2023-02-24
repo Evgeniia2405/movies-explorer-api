@@ -1,6 +1,6 @@
 const allowedCors = [
-  'https://domainname.evgenia2405.nomoredomainsclub.ru',
-  'http://domainname.evgenia2405.nomoredomainsclub.ru',
+  'https://movies.evgenia2405.nomoredomains.work',
+  'http://movies.evgenia2405.nomoredomains.work',
   'http://localhost:3000',
 ];
 

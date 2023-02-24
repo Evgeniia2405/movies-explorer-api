@@ -12,3 +12,7 @@
 ## Запуск проекта
 `npm run start` — запускает сервер   
 `npm run dev` — запускает сервер с hot-reload
+
+# Ссылки
+- IP 51.250.12.94
+- Backend [https://api.movies.evgenia2405.nomoredomains.work/]
