@@ -3,9 +3,15 @@ const ForbiddenError = require('../errors/forbidden-err');
 const IncorrectError = require('../errors/incorrect-err');
 const NotFoundError = require('../errors/not-found-err');
 
+const {
+  INCORRECT_MOVIES_DATA_ERROR_MESSAGE,
+  DATA_MOVIES_NOT_FOUND_ERROR_MESSAGE,
+  FORBIDDEN_ERROR_MESSAGE,
+} = require('../utils/errorCode');
+
 const getMovies = async (req, res, next) => {
   try {
-    const movies = await Movie.find({});
+    const movies = await Movie.find({ owner: req.user._id });
     res.send(movies);
   } catch (err) {
     next(err);
@@ -14,55 +20,31 @@ const getMovies = async (req, res, next) => {
 
 const saveMovie = async (req, res, next) => {
   try {
-    const {
-      country,
-      director,
-      duration,
-      year,
-      description,
-      image,
-      trailerLink,
-      thumbnail,
-      movieId,
-      nameRU,
-      nameEN,
-    } = req.body;
-    const movie = await Movie.create({
-      country,
-      director,
-      duration,
-      year,
-      description,
-      image,
-      trailerLink,
-      thumbnail,
-      movieId,
-      nameRU,
-      nameEN,
-      owner: req.user._id,
-    });
+    const movie = await Movie.create({ ...req.body, owner: req.user._id });
     await movie.populate('owner');
     res.send(movie);
   } catch (err) {
     if (err.name === 'ValidationError') {
-      throw new IncorrectError('Переданы некорректные данные при сохранении фильма');
+      throw new IncorrectError(INCORRECT_MOVIES_DATA_ERROR_MESSAGE);
+    } else {
+      next(err);
     }
-    next(err);
   }
 };
 
 const deleteMovie = async (req, res, next) => {
   try {
     const movie = await Movie.findById(req.params._id);
-    if (!movie) throw new NotFoundError('Фильм с указанным _id не найден');
-    if (movie.owner.toString() !== req.user._id) throw new ForbiddenError('Это карточка другого пользователя, вы не можете ее удалить');
+    if (!movie) throw new NotFoundError(DATA_MOVIES_NOT_FOUND_ERROR_MESSAGE);
+    if (movie.owner.toString() !== req.user._id) throw new ForbiddenError(FORBIDDEN_ERROR_MESSAGE);
     await movie.delete();
     res.send(movie);
   } catch (err) {
     if (err.name === 'CastError') {
-      next(new IncorrectError('Переданы некорректные данные фильма'));
+      next(new IncorrectError(INCORRECT_MOVIES_DATA_ERROR_MESSAGE));
+    } else {
+      next(err);
     }
-    next(err);
   }
 };
 // sdasdasds

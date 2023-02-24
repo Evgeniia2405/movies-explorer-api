@@ -13,21 +13,24 @@ const {
 
 const {
   MONGO_DUPLICATE_ERROR_CODE,
+  MONGO_DUPLICATE_USER_ERROR_MESSAGE,
+  MONGO_DUPLICATE_MAIL_ERROR_MESSAGE,
+  DATA_USER_NOT_FOUND_ERROR_MESSAGE,
+  INCORRECT_USER_DATA_ERROR_MESSAGE,
+  AUTHORIZED_ERROR_MESSAGE,
 } = require('../utils/errorCode');
 
 const getUserMe = async (req, res, next) => {
   try {
     const user = await User.findById(req.user._id);
-    if (!user) throw new NotFoundError('Пользователь с указанным _id не найден');
+    if (!user) throw new NotFoundError(DATA_USER_NOT_FOUND_ERROR_MESSAGE);
     res.send(user);
   } catch (err) {
     if (err.name === 'CastError') {
-      next(new IncorrectError('Переданы некорректные данные пользователя'));
+      next(new IncorrectError(INCORRECT_USER_DATA_ERROR_MESSAGE));
+    } else {
+      next(err);
     }
-    if (err.message === 'not found') {
-      next(new NotFoundError('Пользователь с указанным _id не найден'));
-    }
-    next(err);
   }
 };
 
@@ -51,12 +54,13 @@ const register = async (req, res, next) => {
     });
   } catch (err) {
     if (err.name === 'ValidationError') {
-      next(new IncorrectError('Переданы некорректные данные при создании пользователя'));
+      next(new IncorrectError(INCORRECT_USER_DATA_ERROR_MESSAGE));
     }
     if (err.code === MONGO_DUPLICATE_ERROR_CODE) {
-      next(new ConflictError('Такой пользователь уже существует'));
+      next(new ConflictError(MONGO_DUPLICATE_USER_ERROR_MESSAGE));
+    } else {
+      next(err);
     }
-    next(err);
   }
 };
 
@@ -65,12 +69,12 @@ const login = async (req, res, next) => {
   try {
     const user = await User.findOne({ email }).select('+password');
     if (!user) {
-      throw new UnauthorizedError('Неправильные почта или пароль');
+      throw new UnauthorizedError(AUTHORIZED_ERROR_MESSAGE);
     }
     const matched = await bcrypt.compare(password, user.password);
     if (!matched) {
       // хеши не совпали — отклоняем промис
-      throw new UnauthorizedError('Неправильные почта или пароль');
+      throw new UnauthorizedError(AUTHORIZED_ERROR_MESSAGE);
     }
     // аутентификация успешна
     const token = generateToken({ _id: user._id });
@@ -91,16 +95,16 @@ const editUser = async (req, res, next) => {
         runValidators: true, // данные будут валидированы перед изменением
       },
     );
-    if (!user) throw new NotFoundError('Пользователь с указанным _id не найден');
+    if (!user) throw new NotFoundError(DATA_USER_NOT_FOUND_ERROR_MESSAGE);
     res.send(user);
   } catch (err) {
-    if (err.name === 'ValidationError') {
-      next(new IncorrectError('Переданы некорректные данные при обновлении профиля'));
+    if (err.name === 'ValidationError' || err.name === 'CastError') {
+      next(new IncorrectError(INCORRECT_USER_DATA_ERROR_MESSAGE));
+    } else if (err.code === MONGO_DUPLICATE_ERROR_CODE) {
+      next(new ConflictError(MONGO_DUPLICATE_MAIL_ERROR_MESSAGE));
+    } else {
+      next(err);
     }
-    if (err.name === 'CastError') {
-      next(new IncorrectError('Переданы некорректные данные при обновлении профиля'));
-    }
-    next(err);
   }
 };
 

@@ -1,5 +1,4 @@
 const express = require('express');
-const dotenv = require('dotenv');
 const mongoose = require('mongoose');
 const { errors } = require('celebrate');
 const bodyParser = require('body-parser');
@@ -9,16 +8,11 @@ const centralErrorHandler = require('./middlewares/centralErrorHandler');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const { cors } = require('./middlewares/cors');
 
-dotenv.config();
+const config = require('./utils/config');
 
 const app = express();
 
-const {
-  PORT = 4000,
-  MONGO_URL = 'mongodb://localhost:27017/bitfilmsdb',
-} = process.env;
-
-const router = require('./routes/index');
+const router = require('./routes');
 
 app.use(cors);
 
@@ -39,10 +33,10 @@ app.use(errors()); // обработчик ошибок celebrate
 app.use(centralErrorHandler);
 
 async function connect() {
-  await mongoose.connect(MONGO_URL, {});
-  console.log(`Server connect db ${MONGO_URL}`);
-  await app.listen(PORT);
-  console.log(`Server listen port ${PORT}`);
+  await mongoose.connect(config.MONGO_URL, {});
+  console.log(`Server connect db ${config.MONGO_URL}`);
+  await app.listen(config.PORT);
+  console.log(`Server listen port ${config.PORT}`);
 }
 
 connect();
