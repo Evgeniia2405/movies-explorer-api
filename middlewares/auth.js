@@ -16,10 +16,7 @@ module.exports = (req, res, next) => {
   let payload;
   try {
     payload = jwt.verify(token, config.JWT_KEY);
-    console.log(token);
   } catch (err) {
-    console.log(config.JWT_KEY);
-    console.log(token);
     next(new UnauthorizedErr(UNAUTHORIZED_ERROR_MESSAGE));
   }
 

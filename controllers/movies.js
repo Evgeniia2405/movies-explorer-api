@@ -25,7 +25,7 @@ const saveMovie = async (req, res, next) => {
     res.send(movie);
   } catch (err) {
     if (err.name === 'ValidationError') {
-      throw new IncorrectError(INCORRECT_MOVIES_DATA_ERROR_MESSAGE);
+      next(new IncorrectError(INCORRECT_MOVIES_DATA_ERROR_MESSAGE));
     } else {
       next(err);
     }
