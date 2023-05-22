@@ -1,7 +1,7 @@
 ## movies-explorer-api - бэкенд для приложения "movies-explorer 
 
 ### Ссылка на фронтенд приложения "movies-explorer"
-- (frontend "movies-explorer")[https://github.com/Evgeniia2405/movies-explorer-frontend/]
+- (https://github.com/Evgeniia2405/movies-explorer-frontend/)[https://github.com/Evgeniia2405/movies-explorer-frontend/]
 
 ### Основные директории:
 
@@ -21,8 +21,9 @@
 - DELETE `/movies/:id` - запрос для удаления фильма по id
 
 ## Инструкция по запуску локального серера
-- клонировать репозиторий
+- запустите сервер MongoDB (откройте терминал (macOS и Linux) или Git Bash (Windows) и введите команду: mongod)
+- клонировать данный репозиторий
 - выполнить команду `npm i` для установки зависимостей
-- выполнить команду `npm run dev` — запустите сервер на порту 3000 (порт 3001 оставьте для фронтенда)
+- выполнить команду `npm run dev` — сервер запустится на порту 3001 (фронтенд будет обращаться к серверу локально по адресу http://localhost:3001)
 
 
