@@ -24,6 +24,6 @@
 - запустите сервер MongoDB (откройте терминал (macOS и Linux) или Git Bash (Windows) и введите команду: mongod)
 - клонировать данный репозиторий
 - выполнить команду `npm i` для установки зависимостей
-- выполнить команду `npm run dev` — сервер запустится на порту 3001 ([https://github.com/Evgeniia2405/movies-explorer-frontend/](фронтенд) будет обращаться к серверу локально по адресу http://localhost:3001)
+- выполнить команду `npm run dev` — сервер запустится на порту 3001 ([фронтенд](https://github.com/Evgeniia2405/movies-explorer-frontend/) будет обращаться к серверу локально по адресу http://localhost:3001)
 
 
